@@ -1,10 +1,11 @@
 import requests
 from lxml import html
-encabezado={
-    "user-agent":"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36"
+
+encabezado = {
+    "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/77.0.3865.90 Safari/537.36"
 }
 url = "https://www.wikipedia.org/"
-resp = requests.get(url,headers=encabezado)
+resp = requests.get(url, headers=encabezado)
 # print(resp.text)
 parser = html.fromstring(resp.text)
 # =====FORMA 1==========
@@ -19,12 +20,6 @@ parser = html.fromstring(resp.text)
 # for idioma in contenido:
 #     print(idioma)
 # ======= Forma 4 =====
-contenido=parser.find_class("central-featured-lang")
+contenido = parser.find_class("central-featured-lang")
 for idioma in contenido:
     print(idioma.text_content())
-
-# def print_hi(name):
-#     print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-# if __name__ == '__main__':
-
-#     print_hi('PyCharm')
