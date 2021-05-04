@@ -21,8 +21,8 @@ class StackoverflowSpider(Spider):
     def parse(self, response):
         sel = Selector(response)
         titulo_de_pagina = sel.xpath('//h1/text()').get()
-        print(titulo_de_pagina, 'Esta aqui')
         lista_preguntas = sel.xpath('//div[@id="questions"]//div[@class="question-summary"]')
+        print(lista_preguntas)
         id = 0
         for preguntas in lista_preguntas:
              item = ItemLoader(Pregunta(),preguntas)
