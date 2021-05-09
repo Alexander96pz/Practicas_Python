@@ -1,12 +1,10 @@
 from scrapy.item import Field
 from scrapy.item import Item
-from scrapy.loader.processors import MapCompose
-from scrapy.spiders import Spider
 from scrapy.selector import Selector
 from scrapy.loader import ItemLoader
 from scrapy.spiders import CrawlSpider,Rule
 from scrapy.linkextractors import LinkExtractor
-
+# Estuctura
 class Contenido(Item):
     titulo=Field()
     ubicacion=Field()
@@ -27,6 +25,7 @@ class eventbrite(CrawlSpider):
     start_urls = ['https://www.eventbrite.com.mx/d/ecuador/events']
     # retardo de busqueda //util para no ser identificado q estoy haciendo scrapping
     dowload_delay=1
+    # Reglas
     rules=(
         Rule(
             # Extraigo todos los links de mi url semilla
@@ -35,28 +34,24 @@ class eventbrite(CrawlSpider):
             ),follow=True,callback='parse_eventos'
         ),
     )
-
-    # def remplace (selt,texto):
-    #     nuevo_texto=texto.replace('•','-')
-    #     if len(nuevo_texto)==0:
-    #         nuevo_texto='Online'
-    #     return nuevo_texto
+    # Metodo de Extraccion
     def parse_eventos(self,response):
         sel=Selector(response)
+        # Extraccion textos
         titulo=sel.xpath('//h1[@class="listing-hero-title"]/text()').get()
         ubicacion=response.xpath('//h2[@class="listing-map-card-title text-medium"]/text()').get()
         direccion=response.xpath('//p[@class="listing-map-card-street-address text-default"]/text()').get()
         precio=response.xpath('//div[@class="js-display-price"]/text()').get()
         date=response.xpath('//p[@class="js-date-time-first-line"]//text()').get()
         organizador=response.xpath('//a[@class="js-d-scroll-to listing-organizer-name text-default"]/text()').get()
-
+        # Limpieza
         titulo=self.limpieza(titulo)
         ubicacion=self.limpieza(ubicacion)
         direccion=self.limpieza(direccion)
         precio=self.limpieza(precio)
         date=self.limpieza(date)
         organizador=self.limpieza(organizador)
-
+        # Estructurar
         item=ItemLoader(Contenido(),sel)
         item.add_value('titulo',titulo)
         item.add_value('ubicacion',ubicacion)
@@ -64,7 +59,9 @@ class eventbrite(CrawlSpider):
         item.add_value('precio',precio)
         item.add_value('date',date)
         item.add_value('organizador',organizador)
+        # Escritura de la Estructura en el Archivo
         yield item.load_item()
+    # Metodo de Limpieza
     def limpieza(self,texto):
         if not texto:
             return 'Sin Texto'
